@@ -1,0 +1,69 @@
+<div class="search">
+  <form #form="ngForm" (ngSubmit)="onSubmit(form)">
+    <input
+      type="text"
+      name="city"
+      id="city"
+      placeholder="Search City"
+      [(ngModel)]="city"
+    />
+    <button type="submit" [disabled]="!city">Search</button>
+  </form>
+</div>
+
+<div class="container" *ngIf="data && !checkCity; else otherData">
+  <div class="upper-data">
+    <div class="background-image">
+      <img
+        src="../assets/images/cold.jpg"
+        alt="Cold Weather"
+        *ngIf="data.current.temp_c < 20"
+      />
+      <img
+        src="../assets/images/hot.jpg"
+        alt="Hot Weather"
+        *ngIf="data.current.temp_c >= 20"
+      />
+    </div>
+
+    <div class="weather-data">
+      <div class="location">{{ dupCity }}</div>
+      <div class="temperature">{{ data.current.temp_c }}&#8451;</div>
+      <div class="condition">
+        <img
+          src="{{ data.current.condition.icon }}"
+          alt="{{ data.current.condition.text }}"
+        />
+        <span>{{ data.current.condition.text }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lower-data">
+    <div class="more-info-label">More Information</div>
+    <div class="more-info-container">
+      <app-info-block
+        label="Feels Like"
+        [value]="data.current.feelslike_c + '℃'"
+        imageSrc="../assets/images/feels_like.png"
+      ></app-info-block>
+      <app-info-block
+        label="Pressure"
+        [value]="data.current.pressure_mb + ' mb'"
+        imageSrc="../assets/images/pressure.jpg"
+      ></app-info-block>
+      <app-info-block
+        label="Humidity"
+        [value]="data.current.humidity + '%'"
+        imageSrc="../assets/images/humidity.png"
+      ></app-info-block>
+      <app-info-block
+        label="Wind"
+        [value]="data.current.wind_kph + ' kph'"
+        imageSrc="../assets/images/wind.jpg"
+      ></app-info-block>
+    </div>
+  </div>
+</div>
+
+<ng-template #otherData>Please enter a valid city...</ng-template>
