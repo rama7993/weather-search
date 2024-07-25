@@ -15,12 +15,12 @@
   <div class="upper-data">
     <div class="background-image">
       <img
-        src="../assets/images/cold.jpg"
+        src="./assets/images/cold.jpg"
         alt="Cold Weather"
         *ngIf="data.current.temp_c < 20"
       />
       <img
-        src="../assets/images/hot.jpg"
+        src="./assets/images/hot.jpg"
         alt="Hot Weather"
         *ngIf="data.current.temp_c >= 20"
       />
@@ -45,22 +45,22 @@
       <app-info-block
         label="Feels Like"
         [value]="data.current.feelslike_c + '℃'"
-        imageSrc="../assets/images/feels_like.png"
+        imageSrc="./assets/images/feels_like.png"
       ></app-info-block>
       <app-info-block
         label="Pressure"
         [value]="data.current.pressure_mb + ' mb'"
-        imageSrc="../assets/images/pressure.jpg"
+        imageSrc="./assets/images/pressure.jpg"
       ></app-info-block>
       <app-info-block
         label="Humidity"
         [value]="data.current.humidity + '%'"
-        imageSrc="../assets/images/humidity.png"
+        imageSrc="./assets/images/humidity.png"
       ></app-info-block>
       <app-info-block
         label="Wind"
         [value]="data.current.wind_kph + ' kph'"
-        imageSrc="../assets/images/wind.jpg"
+        imageSrc="./assets/images/wind.jpg"
       ></app-info-block>
     </div>
   </div>
