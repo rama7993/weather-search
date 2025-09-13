@@ -26,4 +26,17 @@ export class WeatherService {
         })
       );
   }
+
+  getWeatherByCoords(lat: number, lon: number): Observable<WeatherData> {
+    const params = new HttpParams().set('q', `${lat},${lon}`).set('aqi', 'yes');
+
+    return this.http
+      .get<WeatherData>(this.baseUrl, { headers: this.headers, params })
+      .pipe(
+        catchError((error) => {
+          console.error('Error fetching weather data by coordinates', error);
+          return throwError(() => new Error(error));
+        })
+      );
+  }
 }

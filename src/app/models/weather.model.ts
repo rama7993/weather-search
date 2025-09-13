@@ -37,5 +37,17 @@ export interface WeatherData {
     uv: number;
     gust_mph: number;
     gust_kph: number;
+    dewpoint_c?: number;
+    dewpoint_f?: number;
+    air_quality?: {
+      co: number;
+      no2: number;
+      o3: number;
+      pm2_5: number;
+      pm10: number;
+      so2: number;
+      'us-epa-index': number;
+      'gb-defra-index': number;
+    };
   };
 }

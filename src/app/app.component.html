@@ -1,69 +1,236 @@
-<div class="search">
-  <form #form="ngForm" (ngSubmit)="onSubmit(form)">
-    <input
-      type="text"
-      name="city"
-      id="city"
-      placeholder="Search City"
-      [(ngModel)]="city"
-    />
-    <button type="submit" [disabled]="!city">Search</button>
-  </form>
-</div>
+<div class="weather-app">
+  <div class="app-header">
+    <div class="header-controls">
+      <!-- Theme Toggle -->
+      <button
+        class="theme-toggle"
+        (click)="toggleTheme()"
+        [title]="isDarkTheme ? 'Switch to Light Theme' : 'Switch to Dark Theme'"
+      >
+        <i
+          class="fas"
+          [class.fa-sun]="isDarkTheme"
+          [class.fa-moon]="!isDarkTheme"
+        ></i>
+      </button>
 
-<div class="container" *ngIf="data && !checkCity; else otherData">
-  <div class="upper-data">
-    <div class="background-image">
-      <img
-        src="./assets/images/cold.jpg"
-        alt="Cold Weather"
-        *ngIf="data.current.temp_c < 20"
-      />
-      <img
-        src="./assets/images/hot.jpg"
-        alt="Hot Weather"
-        *ngIf="data.current.temp_c >= 20"
-      />
+      <!-- Refresh Button -->
+      <button
+        class="refresh-btn"
+        (click)="refreshWeather()"
+        [disabled]="loading"
+        title="Refresh Weather"
+      >
+        <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i>
+      </button>
     </div>
 
-    <div class="weather-data">
-      <div class="location">{{ dupCity }}</div>
-      <div class="temperature">{{ data.current.temp_c }}&#8451;</div>
-      <div class="condition">
+    <div class="search-container">
+      <form #form="ngForm" (ngSubmit)="onSubmit(form)" class="search-form">
+        <div class="search-input-group">
+          <i class="fas fa-search search-icon"></i>
+          <input
+            type="text"
+            name="city"
+            id="city"
+            class="search-input"
+            placeholder="Search for a city..."
+            [(ngModel)]="city"
+            (input)="onInputChange()"
+          />
+          <button
+            type="submit"
+            class="search-btn"
+            [disabled]="!city || loading"
+          >
+            <i class="fas fa-arrow-right" *ngIf="!loading"></i>
+            <i class="fas fa-spinner fa-spin" *ngIf="loading"></i>
+          </button>
+        </div>
+      </form>
+
+      <!-- Location Button -->
+      <button
+        class="location-btn"
+        (click)="getCurrentLocation()"
+        [disabled]="loading"
+        title="Use Current Location"
+      >
+        <i class="fas fa-map-marker-alt"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Weather Card -->
+  <div class="weather-card" *ngIf="data && !checkCity; else otherData">
+    <!-- Weather Header -->
+    <div class="weather-header">
+      <div class="location-info">
+        <h2 class="city-name">{{ dupCity }}</h2>
+        <p class="current-time">{{ currentTime | date : "EEEE, MMMM d, y" }}</p>
+      </div>
+      <div class="weather-icon">
         <img
-          src="{{ data.current.condition.icon }}"
-          alt="{{ data.current.condition.text }}"
+          [src]="data.current.condition.icon"
+          [alt]="data.current.condition.text"
         />
-        <span>{{ data.current.condition.text }}</span>
+      </div>
+    </div>
+
+    <!-- Main Temperature -->
+    <div class="main-temp">
+      <div class="temp-value">{{ data.current.temp_c }}°</div>
+      <div class="temp-details">
+        <span class="condition-text">{{ data.current.condition.text }}</span>
+        <span class="feels-like"
+          >Feels like {{ data.current.feelslike_c }}°</span
+        >
+      </div>
+    </div>
+
+    <!-- Weather Stats Grid -->
+    <div class="weather-stats">
+      <div class="stat-item">
+        <div class="stat-icon">
+          <i class="fas fa-eye"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ data.current.vis_km }} km</span>
+          <span class="stat-label">Visibility</span>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon">
+          <i class="fas fa-tint"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ data.current.humidity }}%</span>
+          <span class="stat-label">Humidity</span>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon">
+          <i class="fas fa-wind"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ data.current.wind_kph }} km/h</span>
+          <span class="stat-label">Wind Speed</span>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon">
+          <i class="fas fa-thermometer-half"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ data.current.pressure_mb }} mb</span>
+          <span class="stat-label">Pressure</span>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon">
+          <i class="fas fa-sun"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ data.current.uv }}</span>
+          <span class="stat-label">UV Index</span>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon">
+          <i class="fas fa-cloud"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ data.current.cloud }}%</span>
+          <span class="stat-label">Cloud Cover</span>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon">
+          <i class="fas fa-thermometer"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ data.current.dewpoint_c }}°C</span>
+          <span class="stat-label">Dew Point</span>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon">
+          <i class="fas fa-compass"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ data.current.wind_dir }}</span>
+          <span class="stat-label">Wind Direction</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Air Quality -->
+    <div class="air-quality" *ngIf="data && data.current.air_quality">
+      <h3 class="section-title">
+        <i class="fas fa-wind"></i>
+        Air Quality
+      </h3>
+      <div class="air-quality-grid">
+        <div class="air-quality-item">
+          <div class="air-quality-label">AQI</div>
+          <div
+            class="air-quality-value"
+            [class]="getAQIClass(data.current.air_quality['us-epa-index'])"
+          >
+            {{ data.current.air_quality["us-epa-index"] }}
+          </div>
+        </div>
+        <div class="air-quality-item">
+          <div class="air-quality-label">PM2.5</div>
+          <div class="air-quality-value">
+            {{ data.current.air_quality.pm2_5 }} μg/m³
+          </div>
+        </div>
+        <div class="air-quality-item">
+          <div class="air-quality-label">PM10</div>
+          <div class="air-quality-value">
+            {{ data.current.air_quality.pm10 }} μg/m³
+          </div>
+        </div>
+        <div class="air-quality-item">
+          <div class="air-quality-label">O₃</div>
+          <div class="air-quality-value">
+            {{ data.current.air_quality.o3 }} μg/m³
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="lower-data">
-    <div class="more-info-label">More Information</div>
-    <div class="more-info-container">
-      <app-info-block
-        label="Feels Like"
-        [value]="data.current.feelslike_c + '℃'"
-        imageSrc="./assets/images/feels_like.png"
-      ></app-info-block>
-      <app-info-block
-        label="Pressure"
-        [value]="data.current.pressure_mb + ' mb'"
-        imageSrc="./assets/images/pressure.jpg"
-      ></app-info-block>
-      <app-info-block
-        label="Humidity"
-        [value]="data.current.humidity + '%'"
-        imageSrc="./assets/images/humidity.png"
-      ></app-info-block>
-      <app-info-block
-        label="Wind"
-        [value]="data.current.wind_kph + ' kph'"
-        imageSrc="./assets/images/wind.jpg"
-      ></app-info-block>
+  <!-- Loading State -->
+  <ng-template #otherData>
+    <div class="loading-container">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
+      <p class="loading-text">
+        {{
+          loading
+            ? "Loading weather data..."
+            : "Search for a city to get started"
+        }}
+      </p>
     </div>
+  </ng-template>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="errorMessage">
+    <div class="error-icon">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <p class="error-text">{{ errorMessage }}</p>
+    <button class="retry-btn" (click)="clearError()">Try Again</button>
   </div>
 </div>
-
-<ng-template #otherData>Please enter a valid city...</ng-template>
